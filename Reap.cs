@@ -1,4 +1,4 @@
-﻿using dnlib.DotNet;
+using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using System;
 using System.Collections.Generic;
@@ -25,32 +25,28 @@ namespace App_Translator
                 if (md.Body.Instructions[i + 1].OpCode == OpCodes.Callvirt)
                     if (md.Body.Instructions[i + 1].Operand.ToString().Contains("set_Text"))
                         return true;
+
                 //Messagebox forc#
-                if (md.Body.Instructions[i + 1].OpCode == OpCodes.Call)
-                    if (md.Body.Instructions[i + 1].Operand.ToString().Contains("MessageBox::Show"))
-                        return true;
-                if (md.Body.Instructions[i + 2].OpCode == OpCodes.Call)
-                    if (md.Body.Instructions[i + 2].Operand.ToString().Contains("MessageBox::Show"))
-                        return true;
-                if (md.Body.Instructions[i + 3].OpCode == OpCodes.Call)
-                    if (md.Body.Instructions[i + 3].Operand.ToString().Contains("MessageBox::Show"))
-                        return true;
-                if (md.Body.Instructions[i + 4].OpCode == OpCodes.Call)
-                    if (md.Body.Instructions[i + 4].Operand.ToString().Contains("MessageBox::Show"))
-                        return true;
-                //Messagebox forvb
-                if (md.Body.Instructions[i + 1].OpCode == OpCodes.Call)
-                    if (md.Body.Instructions[i + 1].Operand.ToString().Contains("Interaction::MsgBox"))
-                        return true;
-                if (md.Body.Instructions[i + 2].OpCode == OpCodes.Call)
-                    if (md.Body.Instructions[i + 2].Operand.ToString().Contains("Interaction::MsgBox"))
-                        return true;
-                if (md.Body.Instructions[i + 3].OpCode == OpCodes.Call)
-                    if (md.Body.Instructions[i + 3].Operand.ToString().Contains("Interaction::MsgBox"))
-                        return true;
-                if (md.Body.Instructions[i + 4].OpCode == OpCodes.Call)
-                    if (md.Body.Instructions[i + 4].Operand.ToString().Contains("Interaction::MsgBox"))
-                        return true;
+                for (int j = 1; j <= 4; j++)
+                {
+                    if (md.Body.Instructions[i + j].OpCode != OpCodes.Call) continue;
+                    if (!md.Body.Instructions[i + j].Operand.ToString().Contains("MessageBox::Show")) continue;
+                    MemberRef call = md.Body.Instructions[i + j].Operand as MemberRef;
+                    MethodDef cal = call.ResolveMethod();
+                    int param = cal.ParamDefs.Count;
+                    if (((i + j) - param) == i) return true;
+                }
+
+                //MessageBox forvb
+                for (int j = 1; j <= 4; j++)
+                {
+                    if (md.Body.Instructions[i + j].OpCode != OpCodes.Call) continue;
+                    if (!md.Body.Instructions[i + j].Operand.ToString().Contains("Interaction::MsgBox")) continue;
+                    MemberRef call = md.Body.Instructions[i + j].Operand as MemberRef;
+                    MethodDef cal = call.ResolveMethod();
+                    int param = cal.ParamDefs.Count;
+                    if (((i + j) - param) == i) return true;
+                }
             }
             catch { }
             return false;
@@ -71,7 +67,7 @@ namespace App_Translator
                                 string des = "";
                                 if (checkistext(md, i))
                                     des = "[+]";
-                                
+
                                 list.Add(new Item { type = td, method = md, index = i, Value = md.Body.Instructions[i].Operand.ToString(), des = des });
                             }
                         }
@@ -115,7 +111,7 @@ namespace App_Translator
         private void AddItemInListView2(Item lvi)
         {
             ListViewItem item;
-            item = listView2.Items.Add(lvi.type.Name.String + "::" + lvi.method + "=>" + lvi.Value);
+            item = listView2.Items.Add(lvi.type.Name.String + "::" + lvi.method.Name + "=>" + lvi.index);
             item.SubItems.Add(lvi.ToValue);
         }
         private void AddItemInListView1(Item lvi)
@@ -132,7 +128,7 @@ namespace App_Translator
         {
             try
             {
-                ac.RemoveAt(listView2.SelectedItems[0].Index - 1);
+                ac.RemoveAt(listView2.SelectedItems[0].Index);
                 listView2.Items.Remove(listView2.SelectedItems[0]);
             }
             catch { }
@@ -144,7 +140,8 @@ namespace App_Translator
         {
             if (!onupdate)
             {
-                try {
+                try
+                {
                     foreach (TypeDef td in Global.module.GetTypes())
                     {
                         if (td.Name.String == textBox2.Text)
@@ -206,7 +203,7 @@ namespace App_Translator
             Hide();
         }
 
-        Dictionary<string,string> wordlist = new Dictionary<string, string>();
+        Dictionary<string, string> wordlist = new Dictionary<string, string>();
         private void Reap_Load(object sender, EventArgs e)
         {
             LoadWordList(Application.StartupPath + @"\Wordlist.txt");
@@ -232,7 +229,84 @@ namespace App_Translator
 
         private void button1_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("This option has comming at next version.");
+            OpenFileDialog op = new OpenFileDialog();
+            if (op.ShowDialog() == DialogResult.OK)
+            {
+                string[] arr = File.ReadAllLines(op.FileName);
+                bool OnValue = false;
+                Item it = null;
+                foreach (string item in arr)
+                {
+                    if (!OnValue)
+                    {
+                        if (item.StartsWith("="))
+                            continue;
+                        if (string.IsNullOrWhiteSpace(item))
+                            continue;
+                        if (item.StartsWith("-"))
+                            continue;
+
+                        int start = item.IndexOf("=>");
+                        string left = item.Substring(0, start);
+                        string right = item.Substring(start + 2, item.Length - start - 2);
+                        it = new Item();
+                        int start2 = left.IndexOf("::");
+                        string typename = left.Substring(0, start2);
+                        string methodname = left.Substring(start2 + 2, left.Length - start2 - 2);
+                        TypeDef type = GetType(typename);
+                        if (type == null)
+                        {
+                            MessageBox.Show("Can't not find type: " + typename);
+                            continue;
+                        }
+                        MethodDef method = type.FindMethod(methodname);
+                        if (method == null)
+                        {
+                            MessageBox.Show("Can't not find method: " + methodname);
+                            continue;
+                        }
+                        int index;
+                        if (!int.TryParse(right, out index))
+                        {
+                            MessageBox.Show("Can't not find index: " + right);
+                            continue;
+                        }
+                        if (method.Body.Instructions[index].OpCode != OpCodes.Ldstr)
+                        {
+                            MessageBox.Show("Can't not find string at index: " + right);
+                            continue;
+                        }
+                        it.index = index;
+                        it.method = method;
+                        it.type = type;
+                        it.Value = method.Body.Instructions[index].Operand.ToString();
+                        if (checkistext(method, index))
+                            it.des = "[+]";
+                        OnValue = true;
+                    }
+                    else
+                    {
+                        it.ToValue = item;
+                        if (ac.Contains(it))
+                            continue;
+                        ac.Add(it);
+                        AddItemInListView2(it);
+                        OnValue = false;
+                    }
+                }
+            }
+        }
+
+        private TypeDef GetType(string name)
+        {
+            foreach (TypeDef td in Global.module.GetTypes())
+            {
+                if (td.Name == name)
+                {
+                    return td;
+                }
+            }
+            return null;
         }
 
         private void showInViewerToolStripMenuItem_Click(object sender, EventArgs e)
@@ -409,6 +483,23 @@ namespace App_Translator
             string tmp = comboBox1.Text;
             comboBox1.Text = comboBox3.Text;
             comboBox3.Text = tmp;
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            List<string> Neh = new List<string>();
+            foreach (Item item in ac)
+            {
+                Neh.Add("==============================");
+                Neh.Add(item.type.Name + "::" + item.method.Name + "=>" + item.index);
+                Neh.Add(item.ToValue);
+            }
+            SaveFileDialog sv = new SaveFileDialog();
+            sv.FileName = "translatelist.txt";
+            if (sv.ShowDialog() == DialogResult.OK)
+            {
+                File.WriteAllLines(sv.FileName, Neh);
+            }
         }
     }
 }
