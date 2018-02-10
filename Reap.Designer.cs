@@ -1,4 +1,4 @@
-﻿namespace App_Translator
+namespace App_Translator
 {
     partial class Reap
     {
@@ -43,6 +43,7 @@
             this.sendToReaplacerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showInViewerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.button6 = new System.Windows.Forms.Button();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.label10 = new System.Windows.Forms.Label();
             this.comboBox3 = new System.Windows.Forms.ComboBox();
@@ -73,7 +74,8 @@
             this.label3 = new System.Windows.Forms.Label();
             this.button4 = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.button6 = new System.Windows.Forms.Button();
+            this.label11 = new System.Windows.Forms.Label();
+            this.button7 = new System.Windows.Forms.Button();
             this.contextMenuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -207,6 +209,16 @@
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "All Strings";
+            // 
+            // button6
+            // 
+            this.button6.Location = new System.Drawing.Point(204, 61);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(36, 23);
+            this.button6.TabIndex = 11;
+            this.button6.Text = "<=>";
+            this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
             // checkBox2
             // 
@@ -361,9 +373,9 @@
             // 
             this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Location = new System.Drawing.Point(147, 192);
+            this.button2.Location = new System.Drawing.Point(236, 192);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(243, 23);
+            this.button2.Size = new System.Drawing.Size(154, 23);
             this.button2.TabIndex = 5;
             this.button2.Text = "Remove First Selected Item";
             this.button2.UseVisualStyleBackColor = true;
@@ -496,6 +508,8 @@
             // 
             this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox3.Controls.Add(this.label11);
+            this.groupBox3.Controls.Add(this.button7);
             this.groupBox3.Controls.Add(this.listView2);
             this.groupBox3.Controls.Add(this.label2);
             this.groupBox3.Controls.Add(this.groupBox2);
@@ -508,15 +522,28 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Editer:";
             // 
-            // button6
+            // label11
             // 
-            this.button6.Location = new System.Drawing.Point(204, 61);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(36, 23);
-            this.button6.TabIndex = 11;
-            this.button6.Text = "<=>";
-            this.button6.UseVisualStyleBackColor = true;
-            this.button6.Click += new System.EventHandler(this.button6_Click);
+            this.label11.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(125, 197);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(50, 13);
+            this.label11.TabIndex = 7;
+            this.label11.Text = "Save list:";
+            // 
+            // button7
+            // 
+            this.button7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.button7.Location = new System.Drawing.Point(181, 192);
+            this.button7.Name = "button7";
+            this.button7.Size = new System.Drawing.Size(35, 23);
+            this.button7.TabIndex = 8;
+            this.button7.Text = "...";
+            this.button7.UseVisualStyleBackColor = true;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
             // 
             // Reap
             // 
@@ -589,6 +616,8 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.CheckBox checkBox2;
         private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Button button7;
     }
 }
 
