@@ -1,4 +1,4 @@
-﻿using dnlib.DotNet;
+using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using System;
 using System.Collections.Generic;
@@ -22,7 +22,7 @@ namespace App_Translator
             showindex = show;
             InitializeComponent();
         }
-        
+
         private void Lshow_Load(object sender, EventArgs e)
         {
             Text = method.FullName;
@@ -35,7 +35,9 @@ namespace App_Translator
                     item = listView1.Items.Add(indexs++.ToString());
                     item.SubItems.Add(inst.Offset.ToString());
                     item.SubItems.Add(inst.OpCode.ToString());
-                    item.SubItems.Add(inst.Operand.ToString());
+                    if (inst.Operand != null)
+                        item.SubItems.Add(inst.Operand.ToString());
+                    else item.SubItems.Add("");
                 }
                 catch { }
             }
