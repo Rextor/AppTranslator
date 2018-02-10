@@ -1,4 +1,4 @@
-﻿using dnlib.DotNet;
+using dnlib.DotNet;
 using System;
 using System.Windows.Forms;
 
@@ -24,7 +24,13 @@ namespace App_Translator
         {
             try
             {
+                AssemblyResolver asmResolver = new AssemblyResolver();
+                ModuleContext modCtx = new ModuleContext(asmResolver);
+                asmResolver.DefaultModuleContext = modCtx;
+                asmResolver.EnableTypeDefCache = true;
                 Global.module = ModuleDefMD.Load(textBox1.Text);
+                Global.module.Context = modCtx;
+                Global.module.Context.AssemblyResolver.AddToCache(Global.module);
                 Global.Location = textBox1.Text;
                 Reap r = new Reap();
                 r.Show();
